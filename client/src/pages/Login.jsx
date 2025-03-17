@@ -60,7 +60,7 @@ const Login = () => {
 
             <div className='flex flex-col gap-y-5'>
               <Textbox
-                placeholder='email@example.com'
+                placeholder='email@mail.com'
                 type='email'
                 name='email'
                 label='Email Address'
@@ -83,7 +83,7 @@ const Login = () => {
               />
 
               <span className='text-sm text-gray-500 hover:text-blue-600 hover:underline cursor-pointer'>
-                Forget Password
+                Forget Password?
               </span>
 
               <Button
