@@ -60,7 +60,7 @@ const Login = () => {
 
             <div className='flex flex-col gap-y-5'>
               <Textbox
-                placeholder='email@mail.com'
+                placeholder='email@gmail.com'
                 type='email'
                 name='email'
                 label='Email Address'
