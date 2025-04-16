@@ -21,6 +21,10 @@ export const loginOrCreateAccountService = async (data: {
 }) => {
   const { providerId, provider, displayName, email, picture } = data;
 
+  if (!email) {
+    throw new BadRequestException("Email is required for user creation");
+  }
+
   const session = await mongoose.startSession();
 
   try {
@@ -45,7 +49,7 @@ export const loginOrCreateAccountService = async (data: {
       });
       await account.save({ session });
 
-      // 3. Create a new workspace for the new user
+      // Create a new workspace for the new user
       const workspace = new WorkspaceModel({
         name: `My Workspace`,
         description: `Workspace created for ${user.name}`,
@@ -53,12 +57,17 @@ export const loginOrCreateAccountService = async (data: {
       });
       await workspace.save({ session });
 
-      const ownerRole = await RoleModel.findOne({
-        name: Roles.OWNER,
-      }).session(session);
+      // Check if the Owner role exists, if not, create it
+      let ownerRole = await RoleModel.findOne({ name: Roles.OWNER }).session(session);
 
       if (!ownerRole) {
-        throw new NotFoundException("Owner role not found");
+        console.log("Owner role not found, creating it...");
+        ownerRole = new RoleModel({
+          name: Roles.OWNER,
+          permissions: [], // You can define default permissions if needed
+        });
+        await ownerRole.save({ session });
+        console.log("Owner role created:", ownerRole);
       }
 
       const member = new MemberModel({
@@ -116,7 +125,7 @@ export const registerUserService = async (body: {
     });
     await account.save({ session });
 
-    // 3. Create a new workspace for the new user
+    // Create a new workspace for the new user
     const workspace = new WorkspaceModel({
       name: `My Workspace`,
       description: `Workspace created for ${user.name}`,
