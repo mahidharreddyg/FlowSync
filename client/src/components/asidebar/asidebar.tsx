@@ -43,19 +43,22 @@ const Asidebar = () => {
   return (
     <>
       <Sidebar collapsible="icon">
-        <SidebarHeader className="!py-0 dark:bg-background">
-          <div className="flex h-[50px] items-center justify-start w-full px-1">
-            <Logo url={`/workspace/${workspaceId}`} />
-            {open && (
-              <Link
-                to={`/workspace/${workspaceId}`}
-                className="hidden md:flex ml-2 items-center gap-2 self-center font-medium"
-              >
-                Team Sync.
-              </Link>
-            )}
-          </div>
-        </SidebarHeader>
+      <SidebarHeader className="!py-0 dark:bg-background">
+  <div className="flex h-[50px] items-center justify-start w-full px-1">
+    <Link to={`/workspace/${workspaceId}`}>
+      <Logo />
+    </Link>
+    {open && (
+      <Link
+        to={`/workspace/${workspaceId}`}
+        className="hidden md:flex ml-2 items-center gap-2 self-center font-medium"
+      >
+        Team Sync.
+      </Link>
+    )}
+  </div>
+</SidebarHeader>
+
         <SidebarContent className=" !mt-0 dark:bg-background">
           <SidebarGroup className="!py-0">
             <SidebarGroupContent>
