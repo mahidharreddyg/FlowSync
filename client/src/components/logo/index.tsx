@@ -1,10 +1,9 @@
-// src/components/logo/index.tsx
-import { AudioWaveform } from "lucide-react";
+import { Workflow } from "lucide-react";
 
 const Logo = () => {
   return (
     <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-      <AudioWaveform className="size-4" />
+      <Workflow className="size-4" />
     </div>
   );
 };
