@@ -77,8 +77,8 @@ const SignUp = () => {
           to="/"
           className="flex items-center gap-2 self-center font-medium"
         >
-          <Logo url="/" />
-          FlowSync.
+          <Logo />
+          Team Sync.
         </Link>
         <div className="flex flex-col gap-6">
           <Card>
@@ -112,7 +112,7 @@ const SignUp = () => {
                               </FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="Enter Your Name"
+                                  placeholder="Joh Doe"
                                   className="!h-[48px]"
                                   {...field}
                                 />
@@ -134,7 +134,7 @@ const SignUp = () => {
                               </FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="mail@example.com"
+                                  placeholder="m@example.com"
                                   className="!h-[48px]"
                                   {...field}
                                 />
@@ -157,7 +157,6 @@ const SignUp = () => {
                               <FormControl>
                                 <Input
                                   type="password"
-                                  placeholder="Enter Your Password"
                                   className="!h-[48px]"
                                   {...field}
                                 />

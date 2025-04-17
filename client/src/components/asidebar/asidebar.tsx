@@ -45,13 +45,13 @@ const Asidebar = () => {
       <Sidebar collapsible="icon">
         <SidebarHeader className="!py-0 dark:bg-background">
           <div className="flex h-[50px] items-center justify-start w-full px-1">
-          <Logo url={`/workspace/${workspaceId}`} />
+            <Logo url={`/workspace/${workspaceId}`} />
             {open && (
               <Link
                 to={`/workspace/${workspaceId}`}
                 className="hidden md:flex ml-2 items-center gap-2 self-center font-medium"
               >
-                FlowSync.
+                Team Sync.
               </Link>
             )}
           </div>

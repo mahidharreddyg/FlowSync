@@ -14,7 +14,6 @@ import useAuth from "@/hooks/api/use-auth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { invitedUserJoinWorkspaceMutationFn } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
-import type { AxiosError } from "axios";
 
 const InviteUser = () => {
   const navigate = useNavigate();
@@ -28,41 +27,29 @@ const InviteUser = () => {
 
   const { mutate, isPending: isLoading } = useMutation({
     mutationFn: invitedUserJoinWorkspaceMutationFn,
-    onSuccess: (data) => {
-      queryClient.resetQueries({ queryKey: ["userWorkspaces"] });
-      toast({
-        title: "Success",
-        description: "You've joined the workspace!",
-        variant: "success",
-      });
-      navigate(`/workspace/${data.workspaceId}`);
-    },
-    onError: (error: unknown) => {
-      const err = error as AxiosError<{ message?: string }>;
-      const errorMessage =
-        err?.response?.data?.message ??
-        err?.message ??
-        "Something went wrong. Please try again.";
-
-      console.error("Invite join failed:", err);
-
-      toast({
-        title: "Error joining workspace",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    },
   });
 
   const returnUrl = encodeURIComponent(
     `${BASE_ROUTE.INVITE_URL.replace(":inviteCode", inviteCode)}`
   );
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    if (user) {
-      mutate(inviteCode);
-    }
+    mutate(inviteCode, {
+      onSuccess: (data) => {
+        queryClient.resetQueries({
+          queryKey: ["userWorkspaces"],
+        });
+        navigate(`/workspace/${data.workspaceId}`);
+      },
+      onError: (error) => {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      },
+    });
   };
 
   return (
@@ -73,16 +60,16 @@ const InviteUser = () => {
           className="flex items-center gap-2 self-center font-medium"
         >
           <Logo />
-          FlowSync.
+          Team Sync.
         </Link>
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader className="text-center">
               <CardTitle className="text-xl">
-                Hey there! You're invited to join a FlowSync Workspace!
+                Hey there! You're invited to join a TeamSync Workspace!
               </CardTitle>
               <CardDescription>
-                Looks like you need to be logged into your FlowSync account to
+                Looks like you need to be logged into your TeamSync account to
                 join this Workspace.
               </CardDescription>
             </CardHeader>
@@ -100,7 +87,7 @@ const InviteUser = () => {
                           className="!bg-green-500 !text-white text-[23px] !h-auto"
                         >
                           {isLoading && (
-                            <Loader className="!w-6 !h-6 animate-spin mr-2" />
+                            <Loader className="!w-6 !h-6 animate-spin" />
                           )}
                           Join the Workspace
                         </Button>
