@@ -13,8 +13,8 @@ const GoogleOAuthFailure = () => {
           to="/"
           className="flex items-center gap-2 self-center font-medium"
         >
-          <Logo />
-          Team Sync.
+          <Logo url="/" />
+          FlowSync.
         </Link>
         <div className="flex flex-col gap-6"></div>
       </div>

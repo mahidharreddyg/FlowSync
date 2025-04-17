@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 import { compareValue, hashValue } from "../utils/bcrypt";
+import RoleModel from "../models/roles-permission.model"; 
 
 export interface UserDocument extends Document {
   name: string;
@@ -8,6 +9,7 @@ export interface UserDocument extends Document {
   profilePicture: string | null;
   isActive: boolean;
   lastLogin: Date | null;
+  role: mongoose.Types.ObjectId;  
   createdAt: Date;
   updatedAt: Date;
   currentWorkspace: mongoose.Types.ObjectId | null;
@@ -40,11 +42,17 @@ const userSchema = new Schema<UserDocument>(
     },
     isActive: { type: Boolean, default: true },
     lastLogin: { type: Date, default: null },
+    role: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role",  
+      required: true,
+    },
   },
   {
     timestamps: true,
   }
 );
+
 
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
@@ -54,6 +62,7 @@ userSchema.pre("save", async function (next) {
   }
   next();
 });
+
 
 userSchema.methods.omitPassword = function (): Omit<UserDocument, "password"> {
   const userObject = this.toObject();
