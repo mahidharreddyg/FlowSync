@@ -10,7 +10,7 @@ import RecentMembers from "@/components/workspace/member/recent-members";
 const WorkspaceDashboard = () => {
   const { onOpen } = useCreateProjectDialog();
   return (
-    <main className="flex flex-1 flex-col py-4 md:pt-3">
+    <main className="flex flex-1 flex-col py-4 md:pt-3 ">
       <div className="flex items-center justify-between space-y-2 mb-6">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">

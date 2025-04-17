@@ -50,8 +50,8 @@ function getRandomProjectName() {
       5000
     );
 
-    await driver.wait(until.elementIsVisible(newProjectButton), 5000);
-    await driver.wait(until.elementIsEnabled(newProjectButton), 5000);
+    await driver.wait(until.elementIsVisible(newProjectButton), 2000);
+    await driver.wait(until.elementIsEnabled(newProjectButton), 2000);
 
     await newProjectButton.click();
 
