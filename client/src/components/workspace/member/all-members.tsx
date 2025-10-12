@@ -1,4 +1,4 @@
-import { ChevronDown, Loader } from "lucide-react";
+import { ChevronDown, Loader, Trash2 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -21,13 +21,14 @@ import { useAuthContext } from "@/context/auth-provider";
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import useGetWorkspaceMembers from "@/hooks/api/use-get-workspace-members";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { changeWorkspaceMemberRoleMutationFn } from "@/lib/api";
+import { changeWorkspaceMemberRoleMutationFn, removeMemberMutationFn } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
 import { Permissions } from "@/constant";
 const AllMembers = () => {
   const { user, hasPermission } = useAuthContext();
 
   const canChangeMemberRole = hasPermission(Permissions.CHANGE_MEMBER_ROLE);
+  const canRemoveMember = hasPermission(Permissions.REMOVE_MEMBER);
 
   const queryClient = useQueryClient();
   const workspaceId = useWorkspaceId();
@@ -38,6 +39,10 @@ const AllMembers = () => {
 
   const { mutate, isPending: isLoading } = useMutation({
     mutationFn: changeWorkspaceMemberRoleMutationFn,
+  });
+
+  const { mutate: removeMember, isPending: isRemoving } = useMutation({
+    mutationFn: removeMemberMutationFn,
   });
 
   const handleSelect = (roleId: string, memberId: string) => {
@@ -70,6 +75,33 @@ const AllMembers = () => {
     });
   };
 
+  const handleRemoveMember = (memberId: string, memberName: string) => {
+    if (window.confirm(`Are you sure you want to remove ${memberName} from this workspace?`)) {
+      removeMember(
+        { workspaceId, memberId },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: ["members", workspaceId],
+            });
+            toast({
+              title: "Success",
+              description: "Member removed successfully",
+              variant: "success",
+            });
+          },
+          onError: (error) => {
+            toast({
+              title: "Error",
+              description: error.message,
+              variant: "destructive",
+            });
+          },
+        }
+      );
+    }
+  };
+
   return (
     <div className="grid gap-6 pt-2">
       {isPending ? (
@@ -100,6 +132,21 @@ const AllMembers = () => {
               </div>
             </div>
             <div className="flex items-center gap-3">
+              {canRemoveMember && member.userId._id !== user?._id && member.role.name !== "OWNER" && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleRemoveMember(member.userId._id, member.userId.name)}
+                  disabled={isRemoving}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  {isRemoving ? (
+                    <Loader className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Trash2 className="w-4 h-4" />
+                  )}
+                </Button>
+              )}
               <Popover>
                 <PopoverTrigger asChild>
                   <Button

@@ -48,12 +48,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const workspace = workspaceData?.workspace;
 
   useEffect(() => {
+    if (authError) {
+      if ((authError as any)?.errorCode === "ACCESS_UNAUTHORIZED") {
+        navigate("/"); // Redirect to login if user is not authenticated
+      }
+    }
     if (workspaceError) {
-      if (workspaceError?.errorCode === "ACCESS_UNAUTHORIZED") {
+      if ((workspaceError as any)?.errorCode === "ACCESS_UNAUTHORIZED") {
         navigate("/"); // Redirect if the user is not a member of the workspace
       }
     }
-  }, [navigate, workspaceError]);
+  }, [navigate, authError, workspaceError]);
 
   const permissions = usePermissions(user, workspace);
 

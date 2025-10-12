@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { joinWorkspaceController } from "../controllers/member.controller";
+import { joinWorkspaceController, removeMemberController } from "../controllers/member.controller";
 
 const memberRoutes = Router();
 
 memberRoutes.post("/workspace/:inviteCode/join", joinWorkspaceController);
+memberRoutes.delete("/workspace/:workspaceId/member/:memberId", removeMemberController);
 
 export default memberRoutes;

@@ -13,6 +13,13 @@ export const getMemberRoleInWorkspace = async (
   userId: string,
   workspaceId: string
 ) => {
+  if (!userId) {
+    throw new UnauthorizedException(
+      "User not authenticated",
+      ErrorCodeEnum.ACCESS_UNAUTHORIZED
+    );
+  }
+
   const workspace = await WorkspaceModel.findById(workspaceId);
   if (!workspace) {
     throw new NotFoundException("Workspace not found");
@@ -31,6 +38,12 @@ export const getMemberRoleInWorkspace = async (
   }
 
   const roleName = member.role?.name;
+  if (!roleName) {
+    throw new UnauthorizedException(
+      "User role not found",
+      ErrorCodeEnum.ACCESS_UNAUTHORIZED
+    );
+  }
 
   return { role: roleName };
 };
@@ -70,4 +83,43 @@ export const joinWorkspaceByInviteService = async (
   await newMember.save();
 
   return { workspaceId: workspace._id, role: role.name };
+};
+
+export const removeMemberFromWorkspaceService = async (
+  workspaceId: string,
+  memberId: string,
+  currentUserId: string
+) => {
+  const workspace = await WorkspaceModel.findById(workspaceId);
+  if (!workspace) {
+    throw new NotFoundException("Workspace not found");
+  }
+
+  // Check if the member exists in the workspace
+  const member = await MemberModel.findOne({
+    userId: memberId,
+    workspaceId: workspaceId,
+  }).populate("role");
+
+  if (!member) {
+    throw new NotFoundException("Member not found in the workspace");
+  }
+
+  // Prevent self-removal
+  if (memberId === currentUserId) {
+    throw new BadRequestException("You cannot remove yourself from the workspace");
+  }
+
+  // Prevent removing the owner
+  if (member.role?.name === Roles.OWNER) {
+    throw new BadRequestException("Cannot remove the workspace owner");
+  }
+
+  // Remove the member
+  await MemberModel.deleteOne({
+    userId: memberId,
+    workspaceId: workspaceId,
+  });
+
+  return { message: "Member removed successfully" };
 };
