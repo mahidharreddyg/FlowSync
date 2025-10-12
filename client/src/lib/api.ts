@@ -43,8 +43,6 @@ export const getCurrentUserQueryFn =
     return response.data;
   };
 
-//********* WORKSPACE ****************
-//************* */
 
 export const createWorkspaceMutationFn = async (
   data: CreateWorkspaceType
@@ -109,7 +107,6 @@ export const deleteWorkspaceMutationFn = async (
   return response.data;
 };
 
-//*******MEMBER ****************
 
 export const invitedUserJoinWorkspaceMutationFn = async (
   iniviteCode: string
@@ -134,8 +131,6 @@ export const removeMemberMutationFn = async ({
   return response.data;
 };
 
-//********* */
-//********* PROJECTS
 export const createProjectMutationFn = async ({
   workspaceId,
   data,
@@ -202,8 +197,6 @@ export const deleteProjectMutationFn = async ({
   return response.data;
 };
 
-//*******TASKS ********************************
-//************************* */
 
 export const createTaskMutationFn = async ({
   workspaceId,

@@ -38,10 +38,8 @@ export const removeMemberController = asyncHandler(
       throw new UnauthorizedException("User not authenticated");
     }
 
-    // Get user's role in the workspace
     const { role } = await getMemberRoleInWorkspace(currentUserId, workspaceId);
     
-    // Check permissions
     roleGuard(role, [Permissions.REMOVE_MEMBER]);
 
     const result = await removeMemberFromWorkspaceService(

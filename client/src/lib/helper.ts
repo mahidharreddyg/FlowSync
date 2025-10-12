@@ -1,4 +1,3 @@
-//THE UPDATED ONE BECAUSE OF THE FILTERS ->  Take Note ->
 export const transformOptions = (
   options: string[],
   iconMap?: Record<string, React.ComponentType<{ className?: string }>>
@@ -33,7 +32,6 @@ export const getAvatarColor = (initials: string): string => {
     "bg-gray-500 text-white",
   ];
 
-  // Simple hash to map initials to a color index
   const hash = initials
     .split("")
     .reduce((acc, char) => acc + char.charCodeAt(0), 0);

@@ -72,7 +72,6 @@ const TaskTable = () => {
     setPageNumber(page);
   };
 
-  // Handle page size changes
   const handlePageSizeChange = (size: number) => {
     setPageSize(size);
   };
@@ -123,7 +122,6 @@ const DataTableFilterToolbar: FC<DataTableFilterToolbarProps> = ({
   const projects = data?.projects || [];
   const members = memberData?.members || [];
 
-  //Workspace Projects
   const projectOptions = projects?.map((project) => {
     return {
       label: (
@@ -136,7 +134,6 @@ const DataTableFilterToolbar: FC<DataTableFilterToolbarProps> = ({
     };
   });
 
-  // Workspace Memebers
   const assigneesOptions = members?.map((member) => {
     const name = member.userId?.name || "Unknown";
     const initials = getAvatarFallbackText(name);
@@ -175,7 +172,6 @@ const DataTableFilterToolbar: FC<DataTableFilterToolbarProps> = ({
         }
         className="h-8 w-full lg:w-[250px]"
       />
-      {/* Status filter */}
       <DataTableFacetedFilter
         title="Status"
         multiSelect={true}
@@ -185,7 +181,6 @@ const DataTableFilterToolbar: FC<DataTableFilterToolbarProps> = ({
         onFilterChange={(values) => handleFilterChange("status", values)}
       />
 
-      {/* Priority filter */}
       <DataTableFacetedFilter
         title="Priority"
         multiSelect={true}
@@ -195,7 +190,6 @@ const DataTableFilterToolbar: FC<DataTableFilterToolbarProps> = ({
         onFilterChange={(values) => handleFilterChange("priority", values)}
       />
 
-      {/* Assigned To filter */}
       {canAssignTask && (
         <DataTableFacetedFilter
           title="Assigned To"

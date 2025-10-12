@@ -33,7 +33,6 @@ export function DataTablePagination<TData>({
   onPageSizeChange,
 }: DataTablePaginationProps<TData>) {
   const pageIndex = table.getState().pagination.pageIndex;
-  //const pageSize = table.getState().pagination.pageSize;
   const pageCount = Math.ceil(totalCount / pageSize);
 
   const handlePageSizeChange = (size: number) => {

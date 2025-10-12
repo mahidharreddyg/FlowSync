@@ -69,7 +69,6 @@ export default function CreateTaskForm(props: {
   const projects = data?.projects || [];
   const members = memberData?.members || [];
 
-  //Workspace Projects
   const projectOptions = projects?.map((project) => {
     return {
       label: (
@@ -82,7 +81,6 @@ export default function CreateTaskForm(props: {
     };
   });
 
-  // Workspace Memebers
   const membersOptions = members?.map((member) => {
     const name = member.userId?.name || "Unknown";
     const initials = getAvatarFallbackText(name);

@@ -36,7 +36,6 @@ export const createWorkspaceController = asyncHandler(
   }
 );
 
-// Controller: Get all workspaces the user is part of
 
 export const getAllWorkspacesUserIsMemberController = asyncHandler(
   async (req: Request, res: Response) => {

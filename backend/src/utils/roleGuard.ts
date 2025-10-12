@@ -8,7 +8,6 @@ export const roleGuard = (
 ) => {
   const permissions = RolePermissions[role as RoleType];
   
-  // If the role doesn't exist or lacks required permissions, throw an exception
   if (!permissions) {
     throw new UnauthorizedException(`Role ${role} not found`);
   }

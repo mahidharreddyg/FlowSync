@@ -1,4 +1,3 @@
-// EmojiPickerComponent.tsx
 import React from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
@@ -11,7 +10,6 @@ interface EmojiPickerComponentProps {
 const EmojiPickerComponent: React.FC<EmojiPickerComponentProps> = ({
   onSelectEmoji,
 }) => {
-  // Handle emoji selection
   const handleEmojiSelect = (emoji: { native: string }) => {
     console.log(emoji, "emoji");
     onSelectEmoji(emoji.native); // Pass the selected emoji to parent component
@@ -24,13 +22,9 @@ const EmojiPickerComponent: React.FC<EmojiPickerComponentProps> = ({
         custom={customEmojis}
         categories={[
           "activity",
-          // 'flags',
-          // 'foods',
-          // 'frequent',
           "objects",
           "people",
           "places",
-          // 'symbols',
         ]}
         categoryIcons={{
           project_management: {
@@ -47,7 +41,6 @@ const EmojiPickerComponent: React.FC<EmojiPickerComponentProps> = ({
         theme="light"
         navPosition="top"
         maxFrequentRows={0}
-        //emojiButtonSize={30}
         emojiButtonColors={["rgba(102, 51, 153, .2)"]}
         className=" h-[40px]"
       />

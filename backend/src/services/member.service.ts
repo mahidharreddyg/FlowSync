@@ -52,13 +52,11 @@ export const joinWorkspaceByInviteService = async (
   userId: string,
   inviteCode: string
 ) => {
-  // Find workspace by invite code
   const workspace = await WorkspaceModel.findOne({ inviteCode }).exec();
   if (!workspace) {
     throw new NotFoundException("Invalid invite code or workspace not found");
   }
 
-  // Check if user is already a member
   const existingMember = await MemberModel.findOne({
     userId,
     workspaceId: workspace._id,
@@ -74,7 +72,6 @@ export const joinWorkspaceByInviteService = async (
     throw new NotFoundException("Role not found");
   }
 
-  // Add user to workspace as a member
   const newMember = new MemberModel({
     userId,
     workspaceId: workspace._id,
@@ -95,7 +92,6 @@ export const removeMemberFromWorkspaceService = async (
     throw new NotFoundException("Workspace not found");
   }
 
-  // Check if the member exists in the workspace
   const member = await MemberModel.findOne({
     userId: memberId,
     workspaceId: workspaceId,
@@ -105,17 +101,14 @@ export const removeMemberFromWorkspaceService = async (
     throw new NotFoundException("Member not found in the workspace");
   }
 
-  // Prevent self-removal
   if (memberId === currentUserId) {
     throw new BadRequestException("You cannot remove yourself from the workspace");
   }
 
-  // Prevent removing the owner
   if (member.role?.name === Roles.OWNER) {
     throw new BadRequestException("Cannot remove the workspace owner");
   }
 
-  // Remove the member
   await MemberModel.deleteOne({
     userId: memberId,
     workspaceId: workspaceId,

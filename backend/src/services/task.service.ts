@@ -142,7 +142,6 @@ export const getAllTasksService = async (
     };
   }
 
-  //Pagination Setup
   const { pageSize, pageNumber } = pagination;
   const skip = (pageNumber - 1) * pageSize;
 
