@@ -20,7 +20,7 @@ import { priorities, statuses } from "./data";
 import { TaskType } from "@/types/api.type";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export const getColumns = (projectId?: string): ColumnDef<TaskType>[] => {
+export const getColumns = (projectId?: string, canAssignTask?: boolean): ColumnDef<TaskType>[] => {
   const columns: ColumnDef<TaskType>[] = [
     {
       id: "_id",
@@ -66,7 +66,8 @@ export const getColumns = (projectId?: string): ColumnDef<TaskType>[] => {
     },
     ...(projectId
       ? [] // If projectId exists, exclude the "Project" column
-      : [
+      : canAssignTask
+      ? [
           {
             accessorKey: "project",
             header: ({ column }: { column: Column<TaskType, unknown> }) => (
@@ -89,36 +90,41 @@ export const getColumns = (projectId?: string): ColumnDef<TaskType>[] => {
               );
             },
           },
-        ]),
-    {
-      accessorKey: "assignedTo",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Assigned To" />
-      ),
-      cell: ({ row }) => {
-        const assignee = row.original.assignedTo || null;
-        const name = assignee?.name || "";
+        ]
+      : []),
+    ...(canAssignTask
+      ? [
+          {
+            accessorKey: "assignedTo",
+            header: ({ column }: { column: Column<TaskType, unknown> }) => (
+              <DataTableColumnHeader column={column} title="Assigned To" />
+            ),
+            cell: ({ row }: { row: Row<TaskType> }) => {
+              const assignee = row.original.assignedTo || null;
+              const name = assignee?.name || "";
 
-        const initials = getAvatarFallbackText(name);
-        const avatarColor = getAvatarColor(name);
+              const initials = getAvatarFallbackText(name);
+              const avatarColor = getAvatarColor(name);
 
-        return (
-          name && (
-            <div className="flex items-center gap-1">
-              <Avatar className="h-6 w-6">
-                <AvatarImage src={assignee?.profilePicture || ""} alt={name} />
-                <AvatarFallback className={avatarColor}>
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-              <span className="block text-ellipsis w-[100px] truncate">
-                {assignee?.name}
-              </span>
-            </div>
-          )
-        );
-      },
-    },
+              return (
+                name && (
+                  <div className="flex items-center gap-1">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src={assignee?.profilePicture || ""} alt={name} />
+                      <AvatarFallback className={avatarColor}>
+                        {initials}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="block text-ellipsis w-[100px] truncate">
+                      {assignee?.name}
+                    </span>
+                  </div>
+                )
+              );
+            },
+          },
+        ]
+      : []),
     {
       accessorKey: "dueDate",
       header: ({ column }) => (

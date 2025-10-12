@@ -4,14 +4,12 @@ import {
   Loader,
   MoreHorizontal,
   Plus,
-  Trash2,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -25,36 +23,24 @@ import {
 } from "@/components/ui/sidebar";
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import useCreateProjectDialog from "@/hooks/use-create-project-dialog";
-import { ConfirmDialog } from "../resuable/confirm-dialog";
-import useConfirmDialog from "@/hooks/use-confirm-dialog";
 import { Button } from "../ui/button";
-import { Permissions } from "@/constant";
-import PermissionsGuard from "../resuable/permission-guard";
 import { useState } from "react";
 import useGetProjectsInWorkspaceQuery from "@/hooks/api/use-get-projects";
 import { PaginationType } from "@/types/api.type";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteProjectMutationFn } from "@/lib/api";
-import { toast } from "@/hooks/use-toast";
+import { Permissions } from "@/constant";
+import PermissionsGuard from "../resuable/permission-guard";
 
 export function NavProjects() {
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
 
-  const queryClient = useQueryClient();
   const workspaceId = useWorkspaceId();
 
   const { isMobile } = useSidebar();
   const { onOpen } = useCreateProjectDialog();
-  const { context, open, onOpenDialog, onCloseDialog } = useConfirmDialog();
-
   const [pageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-
-  const { mutate, isPending: isLoading } = useMutation({
-    mutationFn: deleteProjectMutationFn,
-  });
 
   const { data, isPending, isFetching, isError } =
     useGetProjectsInWorkspaceQuery({
@@ -72,37 +58,6 @@ export function NavProjects() {
     setPageSize((prev) => prev + 5);
   };
 
-  const handleConfirm = () => {
-    if (!context) return;
-    mutate(
-      {
-        workspaceId,
-        projectId: context?._id,
-      },
-      {
-        onSuccess: (data) => {
-          queryClient.invalidateQueries({
-            queryKey: ["allprojects", workspaceId],
-          });
-          toast({
-            title: "Success",
-            description: data.message,
-            variant: "success",
-          });
-
-          navigate(`/workspace/${workspaceId}`);
-          setTimeout(() => onCloseDialog(), 100);
-        },
-        onError: (error) => {
-          toast({
-            title: "Error",
-            description: error.message,
-            variant: "destructive",
-          });
-        },
-      }
-    );
-  };
   return (
     <>
       <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -178,18 +133,6 @@ export function NavProjects() {
                         <span>View Project</span>
                       </DropdownMenuItem>
 
-                      <PermissionsGuard
-                        requiredPermission={Permissions.DELETE_PROJECT}
-                      >
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          disabled={isLoading}
-                          onClick={() => onOpenDialog(item)}
-                        >
-                          <Trash2 className="text-muted-foreground" />
-                          <span>Delete Project</span>
-                        </DropdownMenuItem>
-                      </PermissionsGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </SidebarMenuItem>
@@ -212,18 +155,6 @@ export function NavProjects() {
         </SidebarMenu>
       </SidebarGroup>
 
-      <ConfirmDialog
-        isOpen={open}
-        isLoading={isLoading}
-        onClose={onCloseDialog}
-        onConfirm={handleConfirm}
-        title="Delete Project"
-        description={`Are you sure you want to delete ${
-          context?.name || "this item"
-        }? This action cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
-      />
     </>
   );
 }

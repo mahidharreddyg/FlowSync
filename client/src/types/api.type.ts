@@ -221,7 +221,7 @@ export type CreateTaskPayloadType = {
     description: string;
     priority: TaskPriorityEnumType;
     status: TaskStatusEnumType;
-    assignedTo: string;
+    assignedTo?: string;
     dueDate: string;
   };
 };

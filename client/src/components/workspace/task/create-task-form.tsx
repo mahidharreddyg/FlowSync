@@ -34,7 +34,8 @@ import {
   transformOptions,
 } from "@/lib/helper";
 import useWorkspaceId from "@/hooks/use-workspace-id";
-import { TaskPriorityEnum, TaskStatusEnum } from "@/constant";
+import { TaskPriorityEnum, TaskStatusEnum, Permissions } from "@/constant";
+import { useAuthContext } from "@/context/auth-provider";
 import useGetProjectsInWorkspaceQuery from "@/hooks/api/use-get-projects";
 import useGetWorkspaceMembers from "@/hooks/api/use-get-workspace-members";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -48,8 +49,11 @@ export default function CreateTaskForm(props: {
 }) {
   const { projectId, onClose } = props;
 
+  const { hasPermission } = useAuthContext();
   const queryClient = useQueryClient();
   const workspaceId = useWorkspaceId();
+
+  const canAssignTask = hasPermission(Permissions.ASSIGN_TASK);
 
   const { mutate, isPending } = useMutation({
     mutationFn: createTaskMutationFn,
@@ -118,9 +122,7 @@ export default function CreateTaskForm(props: {
         required_error: "Priority is required",
       }
     ),
-    assignedTo: z.string().trim().min(1, {
-      message: "AssignedTo is required",
-    }),
+    assignedTo: z.string().optional(),
     dueDate: z.date({
       required_error: "A date of birth is required.",
     }),
@@ -132,6 +134,7 @@ export default function CreateTaskForm(props: {
       title: "",
       description: "",
       projectId: projectId ? projectId : "",
+      assignedTo: "",
     },
   });
 
@@ -289,46 +292,47 @@ export default function CreateTaskForm(props: {
             )}
 
             {/* {Members AssigneeTo} */}
-
-            <div>
-              <FormField
-                control={form.control}
-                name="assignedTo"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Assigned To</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a assignee" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <div
-                          className="w-full max-h-[200px]
-                           overflow-y-auto scrollbar
-                          "
-                        >
-                          {membersOptions?.map((option) => (
-                            <SelectItem
-                              className="cursor-pointer"
-                              key={option.value}
-                              value={option.value}
-                            >
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </div>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            {canAssignTask && (
+              <div>
+                <FormField
+                  control={form.control}
+                  name="assignedTo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Assigned To</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a assignee" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <div
+                            className="w-full max-h-[200px]
+                             overflow-y-auto scrollbar
+                            "
+                          >
+                            {membersOptions?.map((option) => (
+                              <SelectItem
+                                className="cursor-pointer"
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </div>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
 
             {/* {Due Date} */}
             <div className="!mt-2">

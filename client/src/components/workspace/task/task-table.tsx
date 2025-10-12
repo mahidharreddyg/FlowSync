@@ -16,6 +16,8 @@ import useGetProjectsInWorkspaceQuery from "@/hooks/api/use-get-projects";
 import useGetWorkspaceMembers from "@/hooks/api/use-get-workspace-members";
 import { getAvatarColor, getAvatarFallbackText } from "@/lib/helper";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuthContext } from "@/context/auth-provider";
+import { Permissions } from "@/constant";
 
 type Filters = ReturnType<typeof useTaskTableFilter>[0];
 type SetFilters = ReturnType<typeof useTaskTableFilter>[1];
@@ -36,7 +38,9 @@ const TaskTable = () => {
 
   const [filters, setFilters] = useTaskTableFilter();
   const workspaceId = useWorkspaceId();
-  const columns = getColumns(projectId);
+  const { hasPermission } = useAuthContext();
+  const canAssignTask = hasPermission(Permissions.ASSIGN_TASK);
+  const columns = getColumns(projectId, canAssignTask);
 
   const { data, isLoading } = useQuery({
     queryKey: [
@@ -105,7 +109,10 @@ const DataTableFilterToolbar: FC<DataTableFilterToolbarProps> = ({
   filters,
   setFilters,
 }) => {
+  const { hasPermission } = useAuthContext();
   const workspaceId = useWorkspaceId();
+
+  const canAssignTask = hasPermission(Permissions.ASSIGN_TASK);
 
   const { data } = useGetProjectsInWorkspaceQuery({
     workspaceId,
@@ -189,16 +196,18 @@ const DataTableFilterToolbar: FC<DataTableFilterToolbarProps> = ({
       />
 
       {/* Assigned To filter */}
-      <DataTableFacetedFilter
-        title="Assigned To"
-        multiSelect={true}
-        options={assigneesOptions}
-        disabled={isLoading}
-        selectedValues={filters.assigneeId?.split(",") || []}
-        onFilterChange={(values) => handleFilterChange("assigneeId", values)}
-      />
+      {canAssignTask && (
+        <DataTableFacetedFilter
+          title="Assigned To"
+          multiSelect={true}
+          options={assigneesOptions}
+          disabled={isLoading}
+          selectedValues={filters.assigneeId?.split(",") || []}
+          onFilterChange={(values) => handleFilterChange("assigneeId", values)}
+        />
+      )}
 
-      {!projectId && (
+      {!projectId && canAssignTask && (
         <DataTableFacetedFilter
           title="Projects"
           multiSelect={false}
